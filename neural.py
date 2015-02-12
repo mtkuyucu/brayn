@@ -47,19 +47,20 @@ neurons.append(Input())
 neurons.append(Input())
 neurons.append(Neuron([1, 2]))
 
-neuron = neurons[3]
-
 f = (((0, 0), 0), ((0, 1), 1), ((1, 0), 1), ((1, 1), 1))
 data = (random.choice(f) for _ in range(500))
 for input_values, output in data:
     for idx, value in enumerate(input_values):
         neurons[idx+1].output = value
-    neuron.propagate()
+    for neuron in neurons:
+        neuron.propagate()
     neuron.grad = output - neuron.output
-    neuron.backpropagate()
+    for neuron in reversed(neurons):
+        neuron.backpropagate()
 
 for input_values, output in f:
     for idx, value in enumerate(input_values):
         neurons[idx+1].output = value
-    neuron.propagate()
+    for neuron in neurons:
+        neuron.propagate()
     print(output, neuron.output)
