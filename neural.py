@@ -41,6 +41,21 @@ class Neuron(Input):
             x = neurons[i]
             x.grad += x.output * grad
 
+
+def propagate(neurons, input_values):
+    for idx, value in enumerate(input_values):
+        neurons[idx+1].output = value
+    for neuron in neurons:
+        neuron.propagate(neurons)
+    return neuron.output
+
+
+def backpropagate(neurons, correction):
+    neurons[-1].grad = correction
+    for neuron in reversed(neurons):
+        neuron.backpropagate(neurons)
+
+
 neurons = [Input()]  # normal input (1.)
 neurons += [Input(), Input()]  # actual inputs
 neurons += [Neuron([1, 2])]  # output
@@ -48,17 +63,8 @@ neurons += [Neuron([1, 2])]  # output
 f = (((0, 0), 0), ((0, 1), 1), ((1, 0), 1), ((1, 1), 1))
 data = (random.choice(f) for _ in range(500))
 for input_values, output in data:
-    for idx, value in enumerate(input_values):
-        neurons[idx+1].output = value
-    for neuron in neurons:
-        neuron.propagate(neurons)
-    neuron.grad = output - neuron.output
-    for neuron in reversed(neurons):
-        neuron.backpropagate(neurons)
+    correction = output - propagate(neurons, input_values)
+    backpropagate(neurons, correction)
 
 for input_values, output in f:
-    for idx, value in enumerate(input_values):
-        neurons[idx+1].output = value
-    for neuron in neurons:
-        neuron.propagate(neurons)
-    print(output, neuron.output)
+    print(output, propagate(neurons, input_values))
