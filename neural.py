@@ -19,21 +19,19 @@ neurons = [DummyUnit()]
 
 class Neuron:
     def __init__(self, inputs=[]):
-        self.inputs = inputs + [0]
-        self.weights = [1.] * len(self.inputs)
+        self.inputs = [(i, 1.) for i in [0] + inputs]
         self.output = 0.
         self.grad = 0.
 
     def propagate(self):
-        self.output = sigmoid(sum(
-            neurons[i].output*w for i, w in zip(self.inputs, self.weights)))
+        self.output = sigmoid(sum(neurons[i].output*w for i, w in self.inputs))
         self.grad = 0.
 
     def backpropagate(self):
-        self.weights = [w + self.grad*neurons[i].output
-                        for i, w in zip(self.inputs, self.weights)]
+        self.inputs = [
+            (i, w + self.grad*neurons[i].output) for i, w in self.inputs]
         grad = sigmoid_prime(self.grad)
-        for i in self.inputs:
+        for i, _ in self.inputs:
             x = neurons[i]
             x.grad += x.output * grad
 
