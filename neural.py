@@ -11,13 +11,21 @@ def sigmoid_prime(x):
     return (1 - s) * s
 
 
-class DummyUnit:
+class Input:
     output = 1.
     grad = 0.
-neurons = [DummyUnit()]
+    inputs = []
+
+    def propagate(self):
+        pass
+
+    def backpropagate(self):
+        pass
+
+neurons = [Input()]
 
 
-class Neuron:
+class Neuron(Input):
     def __init__(self, inputs=[]):
         self.inputs = [(i, 1.) for i in [0] + inputs]
         self.output = 0.
@@ -35,8 +43,8 @@ class Neuron:
             x = neurons[i]
             x.grad += x.output * grad
 
-neurons.append(Neuron())
-neurons.append(Neuron())
+neurons.append(Input())
+neurons.append(Input())
 neurons.append(Neuron([1, 2]))
 
 neuron = neurons[3]
