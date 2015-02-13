@@ -13,7 +13,7 @@ def sigmoid_prime(x):
 
 class Input:
     output = 1.
-    grad = 0.
+    local_gradient = 0.
     inputs = []
 
     def propagate(self, neurons):
@@ -27,15 +27,17 @@ class Neuron(Input):
     def __init__(self, inputs=[]):
         self.inputs = [(i, 1.) for i in [0] + inputs]
         self.output = 0.
-        self.grad = 0.
+        self.local_gradient = 0.
 
     def propagate(self, neurons):
-        self.output = sigmoid(sum(neurons[i].output*w for i, w in self.inputs))
-        self.grad = 0.
+        self.local_field = sum(neurons[i].output*w for i, w in self.inputs)
+        self.output = sigmoid(self.local_field)
+        self.local_gradient = 0.
 
     def backpropagate(self, neurons):
-        self.inputs = [
-            (i, w + self.grad*neurons[i].output) for i, w in self.inputs]
+        self.inputs = [(i, w + self.local_gradient * neurons[i].output)
+                       for i, w in self.inputs]
+
         grad = sigmoid_prime(self.grad)
         for i, _ in self.inputs:
             x = neurons[i]
@@ -51,7 +53,7 @@ def propagate(neurons, input_values):
 
 
 def backpropagate(neurons, correction):
-    neurons[-1].grad = correction
+    neurons[-1].local_gradient = correction
     for neuron in reversed(neurons):
         neuron.backpropagate(neurons)
 
