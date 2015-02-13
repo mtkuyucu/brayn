@@ -25,7 +25,7 @@ class Input:
 
 class Neuron(Input):
     def __init__(self, inputs=[]):
-        self.inputs = [(i, 1.) for i in [0] + inputs]
+        self.inputs = [(i, random.uniform(-1, 1)) for i in [0] + inputs]
         self.output = 0.
         self.local_gradient = 0.
 
