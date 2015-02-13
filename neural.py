@@ -60,7 +60,8 @@ def backpropagate(neurons, correction):
 
 neurons = [Input()]  # normal input (1.)
 neurons += [Input(), Input()]  # actual inputs
-neurons += [Neuron([1, 2])]  # output
+neurons += [Neuron([1, 2]) for _ in range(10)]  # hidden layer
+neurons += [Neuron(list(range(3,13)))]  # output
 
 f = (((0, 0), 0), ((0, 1), 1), ((1, 0), 1), ((1, 1), 1))
 data = (random.choice(f) for _ in range(500))
