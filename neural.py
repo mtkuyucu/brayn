@@ -63,8 +63,8 @@ neurons += [Input(), Input()]  # actual inputs
 neurons += [Neuron([1, 2]) for _ in range(10)]  # hidden layer
 neurons += [Neuron(list(range(3,13)))]  # output
 
-f = (((0, 0), 0), ((0, 1), 1), ((1, 0), 1), ((1, 1), 1))
-data = (random.choice(f) for _ in range(500))
+f = (((0, 0), 0), ((0, 1), 1), ((1, 0), 1), ((1, 1), 0))
+data = (random.choice(f) for _ in range(10000))
 for input_values, output in data:
     correction = propagate(neurons, input_values) - output
     backpropagate(neurons, correction)
