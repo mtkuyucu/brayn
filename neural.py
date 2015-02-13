@@ -44,30 +44,43 @@ class Neuron(Input):
             neurons[i].local_gradient += w * self.local_gradient
 
 
-def propagate(neurons, input_values):
-    for idx, value in enumerate(input_values):
-        neurons[idx+1].output = value
-    for neuron in neurons:
-        neuron.propagate(neurons)
-    return neuron.output
+class NeuralNetwork:
+    def __init__(self, n_inputs):
+        self.neurons = [Input() for _ in range(n_inputs+1)]
+        self.last_layer = range(1, 1+n_inputs)
+
+    def add_layer(self, n_nodes):
+        layer_start = len(self.neurons)
+        self.neurons += [Neuron(list(self.last_layer)) for _ in range(n_nodes)]
+        self.last_layer = range(layer_start, layer_start + n_nodes)
+
+    def propagate(self, input_values):
+        for idx, value in enumerate(input_values):
+            self.neurons[idx+1].output = value
+        for neuron in self.neurons:
+            neuron.propagate(self.neurons)
+        return neuron.output
+
+    def backpropagate(self, correction):
+        self.neurons[-1].local_gradient = correction
+        for neuron in reversed(self.neurons):
+            neuron.backpropagate(self.neurons)
+
+    def train(self, data):
+        for input_values, output in data:
+            correction = self.propagate(input_values) - output
+            self.backpropagate(correction)
+
+    def compute(self, input_values):
+        return self.propagate(input_values)
 
 
-def backpropagate(neurons, correction):
-    neurons[-1].local_gradient = correction
-    for neuron in reversed(neurons):
-        neuron.backpropagate(neurons)
-
-
-neurons = [Input()]  # normal input (1.)
-neurons += [Input(), Input()]  # actual inputs
-neurons += [Neuron([1, 2]) for _ in range(10)]  # hidden layer
-neurons += [Neuron(list(range(3,13)))]  # output
+nn = NeuralNetwork(2)
+nn.add_layer(10)
+nn.add_layer(1)
 
 f = (((0, 0), 0), ((0, 1), 1), ((1, 0), 1), ((1, 1), 0))
-data = (random.choice(f) for _ in range(10000))
-for input_values, output in data:
-    correction = propagate(neurons, input_values) - output
-    backpropagate(neurons, correction)
+nn.train(random.choice(f) for _ in range(10000))
 
 for input_values, output in f:
-    print(output, propagate(neurons, input_values))
+    print(output, nn.compute(input_values))
