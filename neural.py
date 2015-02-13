@@ -35,13 +35,13 @@ class Neuron(Input):
         self.local_gradient = 0.
 
     def backpropagate(self, neurons):
-        self.inputs = [(i, w + self.local_gradient * neurons[i].output)
+        self.local_gradient *= sigmoid_prime(self.local_field)
+
+        self.inputs = [(i, w - self.local_gradient * neurons[i].output)
                        for i, w in self.inputs]
 
-        grad = sigmoid_prime(self.grad)
-        for i, _ in self.inputs:
-            x = neurons[i]
-            x.grad += x.output * grad
+        for i, w in self.inputs:
+            neurons[i].local_gradient += w * self.local_gradient
 
 
 def propagate(neurons, input_values):
@@ -65,7 +65,7 @@ neurons += [Neuron([1, 2])]  # output
 f = (((0, 0), 0), ((0, 1), 1), ((1, 0), 1), ((1, 1), 1))
 data = (random.choice(f) for _ in range(500))
 for input_values, output in data:
-    correction = output - propagate(neurons, input_values)
+    correction = propagate(neurons, input_values) - output
     backpropagate(neurons, correction)
 
 for input_values, output in f:
