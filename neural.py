@@ -75,12 +75,13 @@ class NeuralNetwork:
         return self.propagate(input_values)
 
 
-nn = NeuralNetwork(2)
-nn.add_layer(10)
-nn.add_layer(1)
+if __name__ == "__main__":
+    nn = NeuralNetwork(2)
+    nn.add_layer(20)
+    nn.add_layer(1)
 
-f = (((0, 0), 0), ((0, 1), 1), ((1, 0), 1), ((1, 1), 0))
-nn.train(random.choice(f) for _ in range(10000))
+    f = (((0, 0), 0), ((0, 1), 1), ((1, 0), 1), ((1, 1), 0))
+    nn.train(random.choice(f) for _ in range(10000))
 
-for input_values, output in f:
-    print(output, nn.compute(input_values))
+    for input_values, output in f:
+        print(output, nn.compute(input_values))
