@@ -18,7 +18,7 @@ def images_from(filename):
         magicword, n_images, n_rows, n_cols = header
         assert magicword == 2051
         for _ in range(n_images):
-            yield f.read(n_rows * n_cols)
+            yield (byte / 256. for byte in f.read(n_rows * n_cols))
 
 
 nn = neural.NeuralNetwork(28*28)
