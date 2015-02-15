@@ -25,21 +25,16 @@ nn = neural.NeuralNetwork(28*28)
 nn.add_layer(10)
 nn.add_layer(1)
 
-n_subjects = 10
-n_iterations = 10
+n_iterations = 1
 
 
 def data():
     for _ in range(n_iterations):
         labels = labels_from("mnist/train-labels-idx1-ubyte.gz")
         images = images_from("mnist/train-images-idx3-ubyte.gz")
-        idx = 0
         for label, image in zip(labels, images):
             if label in (0, 5):
                 yield image, float(label == 0)
-                idx += 1
-                if idx >= n_subjects:
-                    break
 
 
 def tests():
@@ -47,13 +42,9 @@ def tests():
     #images = images_from("mnist/t10k-images-idx3-ubyte.gz")
     labels = labels_from("mnist/train-labels-idx1-ubyte.gz")
     images = images_from("mnist/train-images-idx3-ubyte.gz")
-    idx = 0
     for label, image in zip(labels, images):
         if label in (0, 5):
             yield image, float(label == 0)
-            idx += 1
-            if idx >= n_subjects:
-                break
 
 print("training")
 nn.train(data())
