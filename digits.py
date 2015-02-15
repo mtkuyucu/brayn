@@ -33,16 +33,14 @@ def data():
         labels = labels_from("mnist/train-labels-idx1-ubyte.gz")
         images = images_from("mnist/train-images-idx3-ubyte.gz")
         for label, image in zip(labels, images):
-            if label in (0, 5):
-                yield image, float(label == 0)
+            yield image, float(label == 0)
 
 
 def tests():
     labels = labels_from("mnist/t10k-labels-idx1-ubyte.gz")
     images = images_from("mnist/t10k-images-idx3-ubyte.gz")
     for label, image in zip(labels, images):
-        if label in (0, 5):
-            yield image, float(label == 0)
+        yield image, float(label == 0)
 
 print("training")
 nn.train(data())
