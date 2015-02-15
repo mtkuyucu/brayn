@@ -3,7 +3,10 @@ import math
 
 
 def sigmoid(x):
-    return 1 / (1 + math.exp(-x))
+    if x < -500:
+        return 1.
+    else:
+        return 1 / (1 + math.exp(-x))
 
 
 def sigmoid_prime(x):
