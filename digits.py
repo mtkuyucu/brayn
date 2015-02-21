@@ -4,7 +4,6 @@ import mnist
 
 nn = neural.NeuralNetwork(28*28)
 nn.add_layer(10)
-nn.add_layer(1)
 n_iterations = 1
 
 
