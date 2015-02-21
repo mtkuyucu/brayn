@@ -13,7 +13,8 @@ def data():
         images = mnist.images_from("mnist/train-images-idx3-ubyte.gz")
         for label, image in zip(labels, images):
             image = (pixel / 256. for pixel in image)
-            yield image, [float(label == 0)]
+            expect = [0.]*label + [1.] + [0.]*(10-label)
+            yield image, expect
 
 
 def tests():
@@ -21,7 +22,8 @@ def tests():
     images = mnist.images_from("mnist/t10k-images-idx3-ubyte.gz")
     for label, image in zip(labels, images):
         image = (pixel / 256. for pixel in image)
-        yield image, [float(label == 0)]
+        expect = [0.]*label + [1.] + [0.]*(10-label)
+        yield image, expect
 
 
 print("training")
@@ -30,9 +32,14 @@ for inputs, expect in data():
 
 print("testing")
 n_tests, n_successes = 0, 0
-for inputs_values, expect in tests():
+for inputs, expect in tests():
     n_tests += 1
-    output = nn.compute(inputs_values)
-    if (output > 0.5) == (expect > 0.5):
+    # run neural network
+    output = nn.compute(inputs)
+    # recover labels
+    output = output.index(max(output))
+    expect = expect.index(max(expect))
+    # check result
+    if output == expect:
         n_successes += 1
 print("%u / %u" % (n_successes, n_tests))
