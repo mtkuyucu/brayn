@@ -14,7 +14,7 @@ def data():
         images = mnist.images_from("mnist/train-images-idx3-ubyte.gz")
         for label, image in zip(labels, images):
             image = (pixel / 256. for pixel in image)
-            yield image, float(label == 0)
+            yield image, [float(label == 0)]
 
 
 def tests():
@@ -22,7 +22,7 @@ def tests():
     images = mnist.images_from("mnist/t10k-images-idx3-ubyte.gz")
     for label, image in zip(labels, images):
         image = (pixel / 256. for pixel in image)
-        yield image, float(label == 0)
+        yield image, [float(label == 0)]
 
 
 print("training")

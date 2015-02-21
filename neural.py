@@ -66,13 +66,16 @@ class NeuralNetwork:
         for neuron in self.neurons:
             neuron.propagate(self.neurons)
         # get output
-        return neuron.output
+        last_layer = list(range(self.last_layer_start, len(self.neurons)))
+        return [self.neurons[idx].output for idx in last_layer]
 
     def train(self, inputs, expect):
         # compute actual output
         output = self.compute(inputs)
         # initialiaze gradient
-        self.neurons[-1].local_gradient = output - expect
+        for i in range(len(output)):
+            neuron = self.neurons[self.last_layer_start + i]
+            neuron.local_gradient = output[i] - expect[i]
         # backpropagate
         for neuron in reversed(self.neurons):
             neuron.backpropagate(self.neurons)
@@ -83,7 +86,7 @@ if __name__ == "__main__":
     nn.add_layer(20)
     nn.add_layer(1)
 
-    f = (((0, 0), 0), ((0, 1), 1), ((1, 0), 1), ((1, 1), 0))
+    f = [([0, 0], [0]), ([0, 1], [1]), ([1, 0], [1]), ([1, 1], [0])]
     for _ in range(10000):
         inputs, expect = random.choice(f)
         nn.train(inputs, expect)
