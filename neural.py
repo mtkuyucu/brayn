@@ -57,26 +57,25 @@ class NeuralNetwork:
         self.neurons += [Neuron(list(self.last_layer)) for _ in range(n_nodes)]
         self.last_layer = range(layer_start, layer_start + n_nodes)
 
-    def propagate(self, input_values):
+    def compute(self, input_values):
+        # set inputs
         for idx, value in enumerate(input_values):
             self.neurons[idx+1].output = value
+        # propagate
         for neuron in self.neurons:
             neuron.propagate(self.neurons)
+        # get output
         return neuron.output
-
-    def backpropagate(self, correction):
-        self.neurons[-1].local_gradient = correction
-        for neuron in reversed(self.neurons):
-            neuron.backpropagate(self.neurons)
 
     def train(self, data):
         for input_values, expect in data:
-            output = self.propagate(input_values)
-            correction = output - expect
-            self.backpropagate(correction)
-
-    def compute(self, input_values):
-        return self.propagate(input_values)
+            # compute actual output
+            output = self.compute(input_values)
+            # initialiaze gradient
+            self.neurons[-1].local_gradient = output - expect
+            # backpropagate
+            for neuron in reversed(self.neurons):
+                neuron.backpropagate(self.neurons)
 
 
 if __name__ == "__main__":
