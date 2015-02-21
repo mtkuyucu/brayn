@@ -30,8 +30,9 @@ nn.train(data())
 
 print("testing")
 n_tests, n_successes = 0, 0
-for inputs_values, output in tests():
+for inputs_values, expect in tests():
     n_tests += 1
-    if (nn.compute(inputs_values) > 0.5) == (output > 0.5):
+    output = nn.compute(inputs_values)
+    if (output > 0.5) == (expect > 0.5):
         n_successes += 1
 print("%u / %u" % (n_successes, n_tests))

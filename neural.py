@@ -70,8 +70,9 @@ class NeuralNetwork:
             neuron.backpropagate(self.neurons)
 
     def train(self, data):
-        for input_values, output in data:
-            correction = self.propagate(input_values) - output
+        for input_values, expect in data:
+            output = self.propagate(input_values)
+            correction = output - expect
             self.backpropagate(correction)
 
     def compute(self, input_values):
@@ -86,5 +87,6 @@ if __name__ == "__main__":
     f = (((0, 0), 0), ((0, 1), 1), ((1, 0), 1), ((1, 1), 0))
     nn.train(random.choice(f) for _ in range(10000))
 
-    for input_values, output in f:
-        print(output, nn.compute(input_values))
+    for input_values, expect in f:
+        output = nn.compute(input_values)
+        print(expect, output)
