@@ -50,12 +50,13 @@ class Neuron(Input):
 class NeuralNetwork:
     def __init__(self, n_inputs):
         self.neurons = [Input() for _ in range(n_inputs+1)]
-        self.last_layer = range(1, 1+n_inputs)
+        self.last_layer_start = 1
 
     def add_layer(self, n_nodes):
-        layer_start = len(self.neurons)
-        self.neurons += [Neuron(list(self.last_layer)) for _ in range(n_nodes)]
-        self.last_layer = range(layer_start, layer_start + n_nodes)
+        last_layer_end = len(self.neurons)
+        last_layer = list(range(self.last_layer_start, last_layer_end))
+        self.neurons += [Neuron(last_layer) for _ in range(n_nodes)]
+        self.last_layer_start = last_layer_end
 
     def compute(self, inputs):
         # set inputs
