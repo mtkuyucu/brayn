@@ -31,15 +31,22 @@ for inputs, expect in data():
     nn.train(inputs, expect)
 
 print("testing")
-n_tests, n_successes = 0, 0
+classifications = [[0]*10 for _ in range(10)]
 for inputs, expect in tests():
-    n_tests += 1
     # run neural network
     output = nn.compute(inputs)
     # recover labels
     output = output.index(max(output))
     expect = expect.index(max(expect))
-    # check result
-    if output == expect:
-        n_successes += 1
+    # account result
+    classifications[expect][output] += 1
+
+# show classifications
+print("   " + " ".join("%4u" % label for label in range(10)))
+for expect, row in enumerate(classifications):
+    print("%u  " % expect + " ".join("%4u" % count for count in row))
+
+# show overall result
+n_tests = sum(sum(row) for row in classifications)
+n_successes = sum(classifications[i][i] for i in range(10))
 print("%u / %u" % (n_successes, n_tests))
