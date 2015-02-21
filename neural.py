@@ -57,9 +57,9 @@ class NeuralNetwork:
         self.neurons += [Neuron(list(self.last_layer)) for _ in range(n_nodes)]
         self.last_layer = range(layer_start, layer_start + n_nodes)
 
-    def compute(self, input_values):
+    def compute(self, inputs):
         # set inputs
-        for idx, value in enumerate(input_values):
+        for idx, value in enumerate(inputs):
             self.neurons[idx+1].output = value
         # propagate
         for neuron in self.neurons:
@@ -67,15 +67,14 @@ class NeuralNetwork:
         # get output
         return neuron.output
 
-    def train(self, data):
-        for input_values, expect in data:
-            # compute actual output
-            output = self.compute(input_values)
-            # initialiaze gradient
-            self.neurons[-1].local_gradient = output - expect
-            # backpropagate
-            for neuron in reversed(self.neurons):
-                neuron.backpropagate(self.neurons)
+    def train(self, inputs, expect):
+        # compute actual output
+        output = self.compute(inputs)
+        # initialiaze gradient
+        self.neurons[-1].local_gradient = output - expect
+        # backpropagate
+        for neuron in reversed(self.neurons):
+            neuron.backpropagate(self.neurons)
 
 
 if __name__ == "__main__":
@@ -84,8 +83,10 @@ if __name__ == "__main__":
     nn.add_layer(1)
 
     f = (((0, 0), 0), ((0, 1), 1), ((1, 0), 1), ((1, 1), 0))
-    nn.train(random.choice(f) for _ in range(10000))
+    for _ in range(10000):
+        inputs, expect = random.choice(f)
+        nn.train(inputs, expect)
 
-    for input_values, expect in f:
-        output = nn.compute(input_values)
+    for inputs, expect in f:
+        output = nn.compute(inputs)
         print(expect, output)

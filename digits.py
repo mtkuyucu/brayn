@@ -26,7 +26,8 @@ def tests():
 
 
 print("training")
-nn.train(data())
+for inputs, expect in data():
+    nn.train(inputs, expect)
 
 print("testing")
 n_tests, n_successes = 0, 0
