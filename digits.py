@@ -1,46 +1,29 @@
-import gzip
-import struct
-
 import neural
-
-
-def labels_from(filename):
-    with gzip.open(filename) as f:
-        magicword, n_labels, = struct.unpack(">II", f.read(8))
-        assert magicword == 2049
-        for _ in range(n_labels):
-            yield struct.unpack("B", f.read(1))[0]
-
-
-def images_from(filename):
-    with gzip.open(filename) as f:
-        header = struct.unpack(">IIII", f.read(16))
-        magicword, n_images, n_rows, n_cols = header
-        assert magicword == 2051
-        for _ in range(n_images):
-            yield (byte / 256. for byte in f.read(n_rows * n_cols))
+import mnist
 
 
 nn = neural.NeuralNetwork(28*28)
 nn.add_layer(10)
 nn.add_layer(1)
-
 n_iterations = 1
 
 
 def data():
     for _ in range(n_iterations):
-        labels = labels_from("mnist/train-labels-idx1-ubyte.gz")
-        images = images_from("mnist/train-images-idx3-ubyte.gz")
+        labels = mnist.labels_from("mnist/train-labels-idx1-ubyte.gz")
+        images = mnist.images_from("mnist/train-images-idx3-ubyte.gz")
         for label, image in zip(labels, images):
+            image = (pixel / 256. for pixel in image)
             yield image, float(label == 0)
 
 
 def tests():
-    labels = labels_from("mnist/t10k-labels-idx1-ubyte.gz")
-    images = images_from("mnist/t10k-images-idx3-ubyte.gz")
+    labels = mnist.labels_from("mnist/t10k-labels-idx1-ubyte.gz")
+    images = mnist.images_from("mnist/t10k-images-idx3-ubyte.gz")
     for label, image in zip(labels, images):
+        image = (pixel / 256. for pixel in image)
         yield image, float(label == 0)
+
 
 print("training")
 nn.train(data())
