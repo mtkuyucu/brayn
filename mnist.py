@@ -1,7 +1,7 @@
 import gzip
 import struct
 import os
-
+mport file
 
 def labels_from(filename):
     with gzip.open(filename) as f:
